@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
+	"github.com/supercoast/profile-api/data"
 	"github.com/supercoast/profile-api/handlers"
 )
 
@@ -24,12 +25,16 @@ func main() {
 		Level: hclog.LevelFromString("DEBUG"),
 	})
 
-	profile := handlers.NewProfile(&l)
+	profileDB := data.NewProfileDB(l)
+	profile := handlers.NewProfile(l, profileDB)
 
 	mux := mux.NewRouter()
 	getRouter := mux.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/api/v1/products", profile.ListProfiles)
-	getRouter.HandleFunc("/api/v1/products/{email:.+}", profile.GetProfile)
+	getRouter.HandleFunc("/api/v1/profiles", profile.ListProfiles)
+	getRouter.HandleFunc(`/api/v1/profiles/{email:/^\S+@\S+\.\S+$/}`, profile.GetProfile)
+
+	postRouter := mux.Methods(http.MethodPost).Subrouter()
+	postRouter.HandleFunc("/api/v1/profiles", profile.CreateProfile)
 
 	addr := strings.Join([]string{serverListener, serverPort}, ":")
 

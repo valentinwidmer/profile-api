@@ -1,22 +1,31 @@
 package data
 
-import "time"
+import (
+	"fmt"
+	"time"
+
+	"github.com/hashicorp/go-hclog"
+)
+
+type ProfileStore interface {
+	AddProfile(p *Profile)
+	DeleteProfile(p string)
+	UpdateProfile(p *Profile)
+	GetProfile(pi string) (*Profile, error)
+}
 
 type Profiles []*Profile
 
-var ProfilesStore = Profiles{
-	&Profile{
-		Email:     "valentin.wali@gmail.com",
-		FirstName: "Valentin",
-		LastName:  "Widmer",
-		CreatedAt: time.Now(),
-	},
-	&Profile{
-		Email:     "francesca.ferago@gmail.com",
-		FirstName: "Francesca",
-		LastName:  "Ferago",
-		CreatedAt: time.Now(),
-	},
+type ProfileDB struct {
+	Logger hclog.Logger
+	DB     Profiles
+}
+
+func NewProfileDB(l hclog.Logger) *ProfileDB {
+	return &ProfileDB{
+		Logger: l,
+		DB:     Profiles{},
+	}
 }
 
 type Profile struct {
@@ -27,6 +36,19 @@ type Profile struct {
 	ModifiedAt time.Time
 }
 
-func GetAllProfiles() Profiles {
-	return ProfilesStore
+func (p *ProfileDB) GetAllProfiles() Profiles {
+	return p.DB
+}
+
+func (p *ProfileDB) GetProfile(pi string) (*Profile, error) {
+	for _, profile := range p.DB {
+		if pi == profile.Email {
+			return profile, nil
+		}
+	}
+	return nil, fmt.Errorf("Product not found")
+}
+
+func (p *ProfileDB) AddProfile(np *Profile) {
+	p.DB = append(p.DB, np)
 }

@@ -1,7 +1,9 @@
 package data
 
 import (
+	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 
 	"k8s.io/apimachinery/pkg/util/json"
@@ -17,4 +19,18 @@ func ToJSON(v interface{}, w io.Writer) error {
 		return err
 	}
 	return nil
+}
+
+func FromJSON(r io.ReadCloser) (*Profile, error) {
+	c, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, fmt.Errorf("Couldn't read data from body: %v", err)
+	}
+	p := &Profile{}
+	err = json.Unmarshal(c, p)
+	if err != nil {
+		return nil, fmt.Errorf("Couldn't unmarshal data to struct: %v", err)
+	}
+
+	return p, nil
 }
