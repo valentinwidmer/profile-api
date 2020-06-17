@@ -13,7 +13,7 @@ type Validation struct {
 }
 
 func NewValidator() *Validation {
-	v := &validator.Validate{}
+	v := validator.New()
 	v.RegisterValidation("name", validateName)
 
 	return &Validation{v}
