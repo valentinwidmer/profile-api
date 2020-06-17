@@ -29,11 +29,12 @@ func NewProfileDB(l hclog.Logger) *ProfileDB {
 }
 
 type Profile struct {
-	Email      string `json:"Email"`
-	FirstName  string `json:"Firstname"`
-	LastName   string `json:"Lastname"`
-	CreatedAt  time.Time
-	ModifiedAt time.Time
+	Email      string    `json:"Email" validation:"required,email" `
+	FirstName  string    `json:"Firstname" validation:"required,name"`
+	LastName   string    `json:"Lastname" validation:"required,name"`
+	CreatedOn  time.Time `json:"-"`
+	ModifiedOn time.Time `json:"-"`
+	DeletedOn  time.Time `json:"-"`
 }
 
 func (p *ProfileDB) GetAllProfiles() Profiles {

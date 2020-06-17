@@ -25,8 +25,10 @@ func main() {
 		Level: hclog.LevelFromString("DEBUG"),
 	})
 
+	v := data.NewValidator()
+
 	profileDB := data.NewProfileDB(l)
-	profile := handlers.NewProfile(l, profileDB)
+	profile := handlers.NewProfile(l, v, profileDB)
 
 	mux := mux.NewRouter()
 	getRouter := mux.Methods(http.MethodGet).Subrouter()
