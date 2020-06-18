@@ -7,13 +7,8 @@ import (
 )
 
 func (p *Profile) CreateProfile(rw http.ResponseWriter, r *http.Request) {
-	np, err := data.FromJSON(r.Body)
-	defer r.Body.Close()
-	if err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-	}
+	profile := r.Context().Value(KeyProduct{}).(*data.Profile)
 
-	p.ProfileDB.AddProfile(np)
-
-	rw.WriteHeader(http.StatusCreated)
+	p.Logger.Info("Adding profile to database", "Email", profile.Email)
+	p.ProfileDB.AddProfile(profile)
 }

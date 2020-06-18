@@ -5,6 +5,12 @@ import (
 	"github.com/supercoast/profile-api/data"
 )
 
+type KeyProduct struct{}
+
+type GenericError struct {
+	Message string `json:"message"`
+}
+
 type Profile struct {
 	Logger    hclog.Logger
 	Validator *data.Validation

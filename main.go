@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -20,10 +19,7 @@ var (
 
 func main() {
 
-	l := hclog.New(&hclog.LoggerOptions{
-		Name:  "profile-api",
-		Level: hclog.LevelFromString("DEBUG"),
-	})
+	l := hclog.Default()
 
 	v := data.NewValidator()
 
@@ -37,6 +33,7 @@ func main() {
 
 	postRouter := mux.Methods(http.MethodPost).Subrouter()
 	postRouter.HandleFunc("/api/v1/profiles", profile.CreateProfile)
+	postRouter.Use(profile.MiddlewareValidateProduct)
 
 	addr := strings.Join([]string{serverListener, serverPort}, ":")
 
@@ -51,6 +48,6 @@ func main() {
 	l.Info("Starting Server", "Address", addr)
 	err := server.ListenAndServe()
 	if err != nil {
-		log.Fatalf("Error while starting server: %v", err)
+		l.Error("Couldn't start server", "error", err)
 	}
 }

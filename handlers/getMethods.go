@@ -18,18 +18,12 @@ func (p *Profile) GetProfile(rw http.ResponseWriter, r *http.Request) {
 		p.Logger.Error("Couldn't fetch product", "Error:", err)
 	}
 
-	err = data.ToJSON(profile, rw)
-	if err != nil {
-		p.Logger.Error("Couldn't write data to customer", "Error:", err)
-	}
+	data.ToJSON(profile, rw)
 }
 
 func (p *Profile) ListProfiles(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-Type", "application/json")
 	products := p.ProfileDB.GetAllProfiles()
 
-	err := data.ToJSON(products, rw)
-	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-	}
+	data.ToJSON(products, rw)
 }
