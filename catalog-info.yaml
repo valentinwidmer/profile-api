@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: profile-api
+  description: Simple golang based api
+  tags:
+    - go
+    - api
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  foo: bar
+  labels: 
+    - test
+    - test-2
+    - test-3
